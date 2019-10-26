@@ -1,0 +1,144 @@
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Paste from Word</title>
+  <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://cdn.bootcss.com/babel-standalone/7.0.0-beta.3/babel.js"></script>
+</head>
+
+<body>
+
+
+<div id="root">
+</div>
+<style type="text/css">
+	.model-mask{
+		position: fixed;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		z-index: 1000;
+		height: 100%;
+		background-color: rgba(0,0,0,0.45);
+	}
+	.model{
+		position: fixed;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		z-index: 1000;
+		overflow: auto;
+		outline: 0;
+	}
+	.model-content{
+		width:400px;
+		height: 200px;
+		position: relative;
+		top: 200px;
+		background: #fff;
+		margin: auto;;
+	}
+	.model-confirmInfo{
+		font-size: 16px;
+		text-align: center;
+		color: #999;
+		padding: 20px;
+	}
+	.model-options{
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+		text-align:center;
+	}
+	.model-options button{
+		margin:  15px;
+	}
+</style>
+<script  type="text/babel">
+	function confirm(info){
+		function Confirm(props){
+			const {callback} = props
+			const [confirmStatus, setConfirmStatus] = React.useState(true);
+			function close(status){
+				setConfirmStatus(false)
+				callback(status)
+			}
+			if(confirmStatus){
+				return (
+					<div>
+						<div className='model-mask'></div>
+						<div className="model">
+							<div className="model-content">
+								<p className="model-confirmInfo">
+									{info}
+								</p>
+								<div className="model-options">
+									<button onClick={()=>close(false)}>取消</button>
+									<button onClick={()=>close(true)}>确定</button>
+									
+								</div>
+							</div>
+						</div>
+					</div>
+				)
+				
+			}else{
+				return null
+			}
+		}
+		var modle = document.createElement('div')
+		document.body.appendChild(modle)
+		return new Promise(resolve=>{
+			ReactDOM.render(<Confirm callback={resolve}  />, modle)
+		})
+	}
+	class Confirm extends React.Component{
+		state = {
+			text:'确认信息'
+		}
+		async componentDidMount(){
+		    let res = await confirm("确定删除吗")
+			console.log(res,123)
+		        if(res) {
+		            console.log("是")
+					this.setState({
+						text:'已确认'
+					})
+		        } else {
+		            console.log("否")
+					this.setState({
+						text:'已取消'
+					})
+		        }
+		}
+		render(){
+			return (
+				<div>
+					
+					{this.state.text}
+				</div>
+			)
+		}
+	}
+	
+	class App extends React.Component{
+		render(){
+			return (
+				<div>
+					<Confirm/>
+				</div>
+			)
+			
+		}
+	}
+	ReactDOM.render(<App/>, document.getElementById('root'));
+</script>
+
+</body>
+
+</html>
